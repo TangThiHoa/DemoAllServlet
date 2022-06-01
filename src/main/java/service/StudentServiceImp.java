@@ -55,13 +55,14 @@ public class StudentServiceImp implements StudentService {
             preparedStatement.setInt(3, student.getClazz().getId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
+            System.out.println(e);
         }
     }
 
     @Override
     public Student findById(int id) {
         Student student = new Student();
-        try (Connection connection = getConnection();
+            try (Connection connection = getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("select * from student where id = ?");) {
             preparedStatement.setInt(1, id);
             System.out.println(preparedStatement); //in ra câu truy vấn.
@@ -70,7 +71,7 @@ public class StudentServiceImp implements StudentService {
                 int age = rs.getInt("age");
                 String name = rs.getString("name");
                 int classId = rs.getInt("classId"); // lấy ra classId từ bảng student trong db
-                Class1 clazz = (Class1) classService.findById(classId);// từ classId vừa lấy được, dùng ClassService để tìm đối tượng class tương ứng
+                Class1 clazz =classService.findById(classId);// từ classId vừa lấy được, dùng ClassService để tìm đối tượng class tương ứng
                 student = new Student(id, name, clazz, age);
             }
         } catch (SQLException e) {
@@ -80,7 +81,18 @@ public class StudentServiceImp implements StudentService {
 
     @Override
     public boolean update(Student student) throws SQLException {
-        return false;
+        boolean a = false;
+        try (
+                Connection connection = getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement("update student set name= ?,age=?,classId=? where id=?");) {
+            preparedStatement.setString(1, student.getName());
+            preparedStatement.setInt(2, student.getAge());
+            preparedStatement.setInt(3, student.getClazz().getId());
+            preparedStatement.setInt(4,student.getId());
+            a = preparedStatement.executeUpdate() > 0;
+
+        }
+        return a;
     }
 
     @Override
@@ -108,7 +120,7 @@ public class StudentServiceImp implements StudentService {
                 int age = rs.getInt("age");
                 String name = rs.getString("name");
                 int clazzId = rs.getInt("classId"); // lấy ra classId từ bảng student trong db
-                Class1 clazz = (Class1) classService.findById(clazzId); // từ classId vừa lấy được, dùng ClassService để tìm đối tượng class tương ứng
+                Class1 clazz = classService.findById(clazzId); // từ classId vừa lấy được, dùng ClassService để tìm đối tượng class tương ứng
                 students.add(new Student(id, name, clazz, age)); //thêm đối tượng là danh sách
             }
         } catch (SQLException e) {

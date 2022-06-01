@@ -6,7 +6,10 @@ public class Student {
     private Class1 clazz;
     private int age;
 
-    public Student() {
+    public Student(String name, int age, Class1 clazz) {
+        this.name = name;
+        this.clazz = clazz;
+        this.age = age;
     }
 
     public Student(int id, String name, Class1 clazz, int age) {
@@ -14,6 +17,10 @@ public class Student {
         this.name = name;
         this.clazz = clazz;
         this.age = age;
+    }
+
+    public Student() {
+
     }
 
     public int getId() {
